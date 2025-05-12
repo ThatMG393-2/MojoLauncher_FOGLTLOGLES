@@ -240,7 +240,8 @@ public final class Tools {
     }
 
     private static boolean checkRenderDistance(File gamedir) {
-        if(!"opengles3_ltw".equals(Tools.LOCAL_RENDERER)) return false;
+        if(!("opengles3_ltw".equals(Tools.LOCAL_RENDERER) ||
+          "opengles3_2_fogltlogles".equals(Tools.LOCAL_RENDERER))) return false;
         if(!affectedByRenderDistanceIssue()) return false;
         if(hasSodium(gamedir)) return false;
 
@@ -304,7 +305,7 @@ public final class Tools {
         JMinecraftVersionList.Version versionInfo = Tools.getVersionInfo(versionId);
 
         // Switch renderer to GL4ES when running a compat context version on LTW
-        if(isCompatContext(versionInfo) && Tools.LOCAL_RENDERER.equals("opengles3_ltw")) {
+        if(isCompatContext(versionInfo) && (Tools.LOCAL_RENDERER.equals("opengles3_ltw") || Tools.LOCAL_RENDERER.equals("opengles3_2_fogltlogles")) {
             instance.renderer = Tools.LOCAL_RENDERER = "opengles2";
             instance.write();
         }
@@ -378,6 +379,8 @@ public final class Tools {
         String args = instance.getLaunchArgs();
         FFmpegPlugin.discover(activity);
         Tools.releaseRenderersCache();
+
+        ctx.appendlnToLog("ThatMG393 was here!");
         JREUtils.launchJavaVM(activity, runtime, gamedir, javaArgList, args);
         // If we returned, this means that the JVM exit dialog has been shown and we don't need to be active anymore.
         // We never return otherwise. The process will be killed anyway, and thus we will become inactive
