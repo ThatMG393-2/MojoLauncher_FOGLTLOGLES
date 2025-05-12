@@ -3,6 +3,8 @@ name: Android CI
 on:
   push:
   workflow_dispatch:
+  repository_dispatch:
+    types: [update-fogle-binary]
 
 jobs:
   build:
@@ -29,6 +31,26 @@ jobs:
           workflow_conclusion: success
           name: output-aar
           path: app_pojavlauncher/libs
+
+      - name: Get FOGLTLOGLES 64-bit
+        uses: dawidd6/action-download-artifact@v2
+        continue-on-error: true
+        with:
+          repo: ThatMG393-2/FOGLTLOGLES
+          workflow: debug.yml
+          workflow_conclusion: success
+          name: "FOGLTOGLES - 64-bit"
+          path: app_pojavlauncher/src/main/jniLibs/arm64-v8a
+
+      - name: Get FOGLTLOGLES 32-bit
+        uses: dawidd6/action-download-artifact@v2
+        continue-on-error: true
+        with:
+          repo: ThatMG393-2/FOGLTLOGLES
+          workflow: debug.yml
+          workflow_conclusion: success
+          name: "FOGLTOGLES - 32-bit"
+          path: app_pojavlauncher/src/main/jniLibs/armeabi-v7a
 
       - uses: gradle/actions/setup-gradle@v4
         with:
