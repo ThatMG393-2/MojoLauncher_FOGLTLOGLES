@@ -246,6 +246,16 @@ class AssetTaskRegistrar {
 afterEvaluate {
     def registrar = new AssetTaskRegistrar(project);
 
+    if (System.getenv("NO_RUNTIME") != null) {
+        project.delete(fileTree(dir: "${projectDir}/build/intermediates/download_deps") {
+            include "ComponentRuntime*"
+        })
+        project.delete("${projectDir}/build/intermediates/remote_asset_set/components/jre/")
+        project.delete("${projectDir}/build/intermediates/remote_asset_set/components/jre-new/")
+        project.delete("${projectDir}/build/intermediates/remote_asset_set/components/jre-21/")
+        println "✓ Runtime dependencies cleaned (NO_RUNTIME is set)"
+    }
+
     android.applicationVariants.configureEach { variant ->
         registrar.setVariant(variant)
 
