@@ -305,7 +305,7 @@ public final class Tools {
         JMinecraftVersionList.Version versionInfo = Tools.getVersionInfo(versionId);
 
         // Switch renderer to GL4ES when running a compat context version on LTW
-        if(isCompatContext(versionInfo) && (Tools.LOCAL_RENDERER.equals("opengles3_ltw") || Tools.LOCAL_RENDERER.equals("opengles3_2_fogltlogles")) {
+        if(isCompatContext(versionInfo) && (Tools.LOCAL_RENDERER.equals("opengles3_ltw") || Tools.LOCAL_RENDERER.equals("opengles3_2_fogltlogles"))) {
             instance.renderer = Tools.LOCAL_RENDERER = "opengles2";
             instance.write();
         }
