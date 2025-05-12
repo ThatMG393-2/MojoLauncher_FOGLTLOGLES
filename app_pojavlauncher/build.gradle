@@ -250,9 +250,12 @@ afterEvaluate {
     def targetAssetsDir = new File(project.projectDir, "build/intermediates/remote_asset_set")
 
     if (System.getenv("NO_RUNTIME") != null) {
-        project.delete(fileTree(dir: targetDownloadDir) {
+        fileTree(dir: targetDownloadDir).matching {
             include "ComponentRuntime*"
-        })
+        }.each { file ->
+            file.delete()
+        }
+        
         project.delete(new File(targetAssetsDir, "components/jre/"))
         project.delete(new File(targetAssetsDir, "components/jre-new/"))
         project.delete(new File(targetAssetsDir, "components/jre-21/"))
