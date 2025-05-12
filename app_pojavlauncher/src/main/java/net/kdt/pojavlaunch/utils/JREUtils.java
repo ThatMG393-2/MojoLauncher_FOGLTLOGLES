@@ -287,8 +287,7 @@ public class JREUtils {
         List<String> userArgs = getJavaArgs(activity, runtimeHome, userArgsString);
 
         //Remove arguments that can interfere with the good working of the launcher
-        purgeArg(userArgs,"-Xms");
-        purgeArg(userArgs,"-Xmx");
+
         purgeArg(userArgs,"-d32");
         purgeArg(userArgs,"-d64");
         purgeArg(userArgs, "-Xint");
@@ -302,8 +301,8 @@ public class JREUtils {
         purgeArg(userArgs, "-XX:ActiveProcessorCount");
 
         //Add automatically generated args
-        userArgs.add("-Xms" + LauncherPreferences.PREF_RAM_ALLOCATION + "M");
-        userArgs.add("-Xmx" + LauncherPreferences.PREF_RAM_ALLOCATION + "M");
+        if(hasArg(userArgs, "-Xms") == null) userArgs.add("-Xms" + LauncherPreferences.PREF_RAM_ALLOCATION + "M");
+        if(hasArg(userArgs, "-Xmx") == null) userArgs.add("-Xmx" + LauncherPreferences.PREF_RAM_ALLOCATION + "M");
         if(LOCAL_RENDERER != null) userArgs.add("-Dorg.lwjgl.opengl.libname=" + graphicsLib);
 
         // Force LWJGL to use the Freetype library intended for it, instead of using the one
@@ -312,6 +311,7 @@ public class JREUtils {
 
         // Some phones are not using the right number of cores, fix that
         userArgs.add("-XX:ActiveProcessorCount=" + java.lang.Runtime.getRuntime().availableProcessors());
+        
         // Disable Sodium's LWJGL check to prevent a crash
         userArgs.add("-Dsodium.checks.issue2561=false");
         
@@ -323,7 +323,7 @@ public class JREUtils {
         JREUtils.setupExitMethod(activity.getApplication());
         JREUtils.initializeHooks();
         chdir(gameDirectory == null ? Tools.DIR_GAME_NEW : gameDirectory.getAbsolutePath());
-        userArgs.add(0,"java"); //argv[0] is the program name according to C standard.
+        userArgs.add(0, "java"); //argv[0] is the program name according to C standard.
 
         final int exitCode = VMLauncher.launchJVM(userArgs.toArray(new String[0]));
         Logger.appendToLog("Java Exit code: " + exitCode);
@@ -487,6 +487,16 @@ public class JREUtils {
         return renderLibrary;
     }
 
+    private static Iterator<String> hasArg(List<String> argList, String argStart) {
+        Iterator<String> args = argList.iterator();
+        
+        while(args.hasNext()) {
+            if(args.next().startsWith(argStart)) return args;
+        }
+        
+        return null;
+    }
+
     /**
      * Remove the argument from the list, if it exists
      * If the argument exists multiple times, they will all be removed.
@@ -494,12 +504,12 @@ public class JREUtils {
      * @param argStart The argument to purge from the list.
      */
     private static void purgeArg(List<String> argList, String argStart) {
-        Iterator<String> args = argList.iterator();
-        while(args.hasNext()) {
-            String arg = args.next();
-            if(arg.startsWith(argStart)) args.remove();
-        }
+        Iterator<String> arg = hasArg(argList, argStart);
+        if(arg == null) return;
+
+        arg.remove();
     }
+    
     private static final int EGL_OPENGL_ES_BIT = 0x0001;
     private static final int EGL_OPENGL_ES2_BIT = 0x0004;
     private static final int EGL_OPENGL_ES3_BIT_KHR = 0x0040;
