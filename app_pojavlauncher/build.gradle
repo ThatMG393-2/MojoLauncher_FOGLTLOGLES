@@ -246,13 +246,16 @@ class AssetTaskRegistrar {
 afterEvaluate {
     def registrar = new AssetTaskRegistrar(project);
 
+    def targetDownloadDir = new File(project.projectDir, "build/intermediates/download_deps")
+    def targetAssetsDir = new File(project.projectDir, "build/intermediates/remote_asset_set")
+
     if (System.getenv("NO_RUNTIME") != null) {
-        project.delete(fileTree(dir: "${projectDir}/build/intermediates/download_deps") {
+        project.delete(fileTree(dir: targetDownloadDir) {
             include "ComponentRuntime*"
         })
-        project.delete("${projectDir}/build/intermediates/remote_asset_set/components/jre/")
-        project.delete("${projectDir}/build/intermediates/remote_asset_set/components/jre-new/")
-        project.delete("${projectDir}/build/intermediates/remote_asset_set/components/jre-21/")
+        project.delete(new File(targetAssetsDir, "components/jre/"))
+        project.delete(new File(targetAssetsDir, "components/jre-new/"))
+        project.delete(new File(targetAssetsDir, "components/jre-21/"))
         println "✓ Runtime dependencies cleaned (NO_RUNTIME is set)"
     }
 
