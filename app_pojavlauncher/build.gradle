@@ -270,7 +270,7 @@ afterEvaluate {
         registrar.projectJarDependency project(":jre_lwjgl3glfw"), "components/lwjgl3"
 
         if (System.getenv("NO_RUNTIME") == null) {
-           def jreBuildRepository = "https://nightly.link/MojoLauncher/android-openjdk-build-multiarch/workflows/build/";
+           def jreBuildRepository = "https://nightly.link/ThatMG393/android-openjdk-build-multiarch/workflows/build/";
  
            registrar.onlineZipDependency jreBuildRepository+"buildjre8/jre8-pojav.zip", "ComponentRuntime8", "components/jre/"
            registrar.onlineZipDependency jreBuildRepository+"buildjre17-21/jre17-pojav.zip", "ComponentRuntime17", "components/jre-new"
